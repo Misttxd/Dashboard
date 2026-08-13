@@ -1,1 +1,46 @@
+# ---------------------------------------------------------------
+# SECRETS — never commit. This repo is public.
+# ---------------------------------------------------------------
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets.json
+
+# Local database (contains your personal health + financial data)
+data/
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+
+# Personal notes / scratch
 *.txt
+!requirements.txt
+
+# Imported raw exports (Hevy CSV, bank statements, etc.)
+imports/
+
+# ---------------------------------------------------------------
+# Toolchain
+# ---------------------------------------------------------------
+node_modules/
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+next-env.d.ts
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

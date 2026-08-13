@@ -1,0 +1,263 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   Design tokens
+   Dark is chosen from the use scene, not the category: one person, alone, at a
+   desktop, in a dim room, in the evening, for a long focused session.
+   ========================================================================== */
+
+@theme {
+  /* --- Ground and surfaces -------------------------------------------------
+     Near-monochrome, very slightly cool. Panels separate by hairline seam and
+     one step of elevation, never by shadow or floating card. */
+  --color-base: #08090a;
+  --color-surface: #0d0e10;
+  --color-raised: #131417;
+  --color-overlay: #181a1e;
+
+  --color-line: #1d1f24; /* hairline seams between panels */
+  --color-line-strong: #292c33; /* borders on interactive elements */
+  --color-line-focus: #3d424b;
+
+  /* --- Text ----------------------------------------------------------------
+     Measured against --color-surface: primary 15.8:1, secondary 6.9:1,
+     tertiary 4.6:1. Muted is decorative-only and never carries meaning. */
+  --color-fg: #ededef;
+  --color-fg-muted: #a1a6ad;
+  --color-fg-subtle: #7b818a;
+  --color-fg-faint: #565c65;
+
+  /* --- Domain accents ------------------------------------------------------
+     Lawful: each owns exactly one domain and marks identity only — active nav,
+     section rule, that domain's chart series. Never decoration, never status. */
+  --color-fitness: #2dd4bf;
+  --color-nutrition: #f5b544;
+  --color-finance: #7c8cff;
+  --color-coach: #b083f0;
+
+  /* --- Semantic ------------------------------------------------------------
+     The only colours allowed to mean good/bad. Always paired with a sign,
+     glyph or label so meaning never rests on hue alone. */
+  --color-pos: #3fcf8e;
+  --color-neg: #f2555a;
+  --color-warn: #e8a44c;
+
+  /* --- Type ---------------------------------------------------------------- */
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+
+  /* Fixed rem scale (product UI is viewed at consistent DPI; no fluid type).
+     Ratio ~1.2, tight enough that many type roles coexist without noise. */
+  --text-2xs: 0.6875rem;
+  --text-xs: 0.75rem;
+  --text-sm: 0.8125rem;
+  --text-base: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 1.875rem;
+  --text-3xl: 2.5rem;
+  --text-4xl: 3.25rem;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+
+  /* Real depth: offset + soft blur. Used only for elements that genuinely
+     float above the page (menus, tooltips), never on panels. */
+  --shadow-pop:
+    0 8px 24px -6px rgb(0 0 0 / 0.6), 0 2px 6px -2px rgb(0 0 0 / 0.4);
+
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+html {
+  color-scheme: dark;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background-color: var(--color-base);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "cv11";
+}
+
+/* Every figure the eye compares vertically is tabular and lining, so columns
+   of numbers line up and digits don't jitter as values change. */
+.nums,
+table,
+input[type="number"],
+input[type="date"] {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-feature-settings: "tnum", "lnum";
+}
+
+/* ==========================================================================
+   Browser surfaces — the parts we did not draw still carry the design
+   ========================================================================== */
+
+::selection {
+  background-color: color-mix(in oklab, var(--color-finance) 32%, transparent);
+  color: var(--color-fg);
+}
+
+:root {
+  accent-color: var(--color-finance);
+  caret-color: var(--color-finance);
+  scrollbar-color: var(--color-line-strong) transparent;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 11px;
+  height: 11px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-line-strong);
+  border: 3px solid transparent;
+  background-clip: content-box;
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-line-focus);
+  background-clip: content-box;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* One focus ring for the whole app, visible against every surface. */
+:focus-visible {
+  outline: 2px solid var(--color-finance);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+a {
+  text-underline-offset: 0.2em;
+  text-decoration-thickness: from-font;
+}
+
+/* Date inputs ship a bright white picker glyph that belongs to no design
+   system; tint it to match the surrounding text. */
+::-webkit-calendar-picker-indicator {
+  filter: invert(0.62) sepia(0.05) saturate(0.4);
+  cursor: pointer;
+}
+::-webkit-calendar-picker-indicator:hover {
+  filter: invert(0.85);
+}
+
+::placeholder {
+  color: var(--color-fg-faint);
+}
+
+/* ==========================================================================
+   Motion — one grammar, fast enough to stay out of the way
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* The one authored entrance: content resolves downward into place, from an
+   already-visible default so nothing is hidden if the animation never runs. */
+@keyframes settle {
+  from {
+    opacity: 0.4;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.settle {
+  animation: settle 240ms var(--ease-out) both;
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Skeletons rather than spinners inside content. */
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--color-raised);
+  border-radius: var(--radius-sm);
+}
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--color-fg) 6%, transparent),
+    transparent
+  );
+  animation: shimmer 1.6s infinite;
+}
+
+/* ==========================================================================
+   Recharts — the library paints its own DOM; bring it into the system
+   ========================================================================== */
+
+.recharts-surface {
+  overflow: visible;
+}
+
+.recharts-cartesian-axis-tick text {
+  fill: var(--color-fg-subtle);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+
+.recharts-cartesian-grid line {
+  stroke: var(--color-line);
+}
+
+.recharts-tooltip-cursor {
+  fill: color-mix(in oklab, var(--color-fg) 5%, transparent);
+}
+
+.recharts-curve.recharts-tooltip-cursor {
+  stroke: var(--color-line-focus);
+}
